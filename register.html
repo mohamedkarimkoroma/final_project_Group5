@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Salone Safe Ride | Sierra Leone</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #006400, #008000);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo-icon {
+            background: #006400;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        .logo-icon span { font-size: 35px; }
+        h1 { color: #006400; text-align: center; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 14px; }
+        
+        .user-type {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        .type-card {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .type-card.selected {
+            background: #e8f5e9;
+            border-color: #006400;
+        }
+        .type-icon { font-size: 32px; }
+        .type-title { font-weight: bold; margin-top: 5px; }
+        
+        .form-group { margin-bottom: 20px; }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        input:focus, select:focus { outline: none; border-color: #006400; }
+        .row { display: flex; gap: 15px; }
+        .row .form-group { flex: 1; }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #006400;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover { background: #008000; }
+        .login-link { text-align: center; margin-top: 20px; }
+        .login-link a { color: #006400; text-decoration: none; }
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+            position: relative;
+        }
+        .divider::before, .divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 35%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+        
+        @media (max-width: 600px) {
+            .row { flex-direction: column; gap: 0; }
+            .card { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo">
+                <div class="logo-icon"><span>🇸🇱</span></div>
+                <h1>Salone Safe Ride</h1>
+                <div class="subtitle">Join Sierra Leone's National Transport Safety Network</div>
+            </div>
+
+            <div class="user-type">
+                <div class="type-card selected" onclick="selectType(this, 'passenger')">
+                    <div class="type-icon">🚶</div>
+                    <div class="type-title">Passenger</div>
+                </div>
+                <div class="type-card" onclick="selectType(this, 'driver')">
+                    <div class="type-icon">🚗</div>
+                    <div class="type-title">Driver</div>
+                </div>
+                <div class="type-card" onclick="selectType(this, 'family')">
+                    <div class="type-icon">👨‍👩‍👧</div>
+                    <div class="type-title">Family Member</div>
+                </div>
+            </div>
+
+            <form method="POST" action="register_process.php">
+                <div class="row">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" name="full_name" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input type="tel" name="phone" placeholder="076XXXXXX" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Password *</label>
+                        <input type="password" name="password" placeholder="Minimum 6 characters" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" name="confirm_password" placeholder="Retype password" required>
+                    </div>
+                </div>
+
+                <div class="divider">📍 Your Location</div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>District of Residence *</label>
+                        <select name="district" id="districtSelect" required>
+                            <option value="">Select District</option>
+                            <option value="Freetown (Western Area Urban)">Freetown (Western Area Urban)</option>
+                            <option value="Western Area Rural">Western Area Rural</option>
+                            <option value="Bo">Bo</option>
+                            <option value="Kenema">Kenema</option>
+                            <option value="Makeni (Bombali)">Makeni (Bombali)</option>
+                            <option value="Kailahun">Kailahun</option>
+                            <option value="Kono">Kono</option>
+                            <option value="Port Loko">Port Loko</option>
+                            <option value="Moyamba">Moyamba</option>
+                            <option value="Kambia">Kambia</option>
+                            <option value="Pujehun">Pujehun</option>
+                            <option value="Bonthe">Bonthe</option>
+                            <option value="Tonkolili">Tonkolili</option>
+                            <option value="Falaba">Falaba</option>
+                            <option value="Karene">Karene</option>
+                            <option value="Koinadugu">Koinadugu</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>City / Town *</label>
+                        <select name="town" id="townSelect" required>
+                            <option value="">Select district first</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="divider">🚨 Emergency Contact Information</div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Emergency Contact Name *</label>
+                        <input type="text" name="emergency_name" placeholder="Family member name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Emergency Contact Phone *</label>
+                        <input type="tel" name="emergency_phone" placeholder="076XXXXXX" required>
+                    </div>
+                </div>
+<div class="divider">🔐 Admin Access (Optional)</div>
+<div class="form-group">
+    <label>Admin Registration Code (If you have one)</label>
+    <input type="password" name="admin_code" placeholder="Enter admin code if applicable">
+    <small style="color: #666;">Leave blank for regular user. Only enter if you have the admin code.</small>
+</div>
+                <input type="hidden" name="user_type" value="passenger" id="user_type">
+
+                <button type="submit">🇸🇱 Register for Salone Safe Ride 🇸🇱</button>
+            </form>
+
+            <div class="login-link">
+                Already have an account? <a href="login.html">Login here</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Town data for each district
+        const townsData = {
+            'Freetown (Western Area Urban)': ['Central Freetown', 'Aberdeen', 'Wilberforce', 'Hill Station', 'Goderich', 'Murray Town', 'Kissy', 'Fourah Bay', 'Kingtom', 'Regent', 'Gloucester', 'Leicester', 'Lumley', 'Sankor', 'Jui', 'Calaba Town', 'Wellington', 'Mount Aureol'],
+            'Western Area Rural': ['Waterloo', 'Hastings', 'Regent', 'York Village', 'Tokeh', 'Lakka', 'No. 2 River'],
+            'Bo': ['Bo City', 'Bo Kenema Road', 'New Site', 'Koribondo', 'Serabu', 'Gbo', 'Bumpe', 'Moyamba Junction', 'Tikonko', 'Kakua', 'Kpetewoma', 'Ngolehun'],
+            'Kenema': ['Kenema City', 'Daru', 'Pendembu', 'Yengema', 'Tongo Field', 'Kailahun Road', 'Dodo', 'Boajibu', 'Nongowa', 'Kpetema'],
+            'Makeni (Bombali)': ['Makeni City', 'Binkolo', 'Kamabai', 'Masongbo', 'Makamba', 'Matotoka', 'Magburaka Road', 'Yele', 'Sella Limba'],
+            'Kailahun': ['Kailahun Town', 'Koindu', 'Kissi Teng', 'Buedu', 'Pendembu Road', 'Sengbe', 'Mano River Bridge'],
+            'Kono': ['Koidu City', 'Sefadu', 'Yengema', 'Jaiama', 'Njaiama', 'Tombodu', 'Kono Diamond Fields'],
+            'Port Loko': ['Port Loko Town', 'Lungi', 'Lunsar', 'Masiaka', 'Rogberi Junction', 'Gberi', 'Kaffu Bullom', 'Freetown-Lungi Highway'],
+            'Moyamba': ['Moyamba Town', 'Rotifunk', 'Shenge', 'Mokonde', 'Taiama', 'Bauya', 'Ribi'],
+            'Kambia': ['Kambia Town', 'Mambolo', 'Magbema', 'Gberi', 'Kychom', 'Sierra Leone-Guinea Border'],
+            'Pujehun': ['Pujehun Town', 'Zimmi', 'Gendema', 'Bomi', 'Foya', 'Mano River Bridge', 'Sahn'],
+            'Bonthe': ['Mattru Jong', 'Bonthe Island', 'Shenge', 'Turtle Islands', 'Plantain Island', 'Bonthe Sea'],
+            'Tonkolili': ['Magburaka', 'Matotoka', 'Mile 91', 'Makali', 'Bumbuna', 'Yele', 'Songo'],
+            'Falaba': ['Falaba Town', 'Kurubonla', 'Sinkunia', 'Yiffin', 'Guinea Border'],
+            'Karene': ['Kabala', 'Kamakwie', 'Binkolo', 'Gbonjema', 'Wondema', 'Loma Mountains'],
+            'Koinadugu': ['Kabala', 'Kurubonla', 'Fadugu', 'Yalunka', 'Sangbarali', 'Wara Wara Mountains']
+        };
+
+        function loadTowns() {
+            const district = document.getElementById('districtSelect').value;
+            const townSelect = document.getElementById('townSelect');
+            
+            townSelect.innerHTML = '<option value="">Select city/town</option>';
+            
+            if (district && townsData[district]) {
+                townsData[district].forEach(town => {
+                    const option = document.createElement('option');
+                    option.value = town;
+                    option.textContent = town;
+                    townSelect.appendChild(option);
+                });
+            }
+        }
+
+        function selectType(element, type) {
+            document.querySelectorAll('.type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            document.getElementById('user_type').value = type;
+        }
+
+        // Load towns when district changes
+        document.getElementById('districtSelect').addEventListener('change', loadTowns);
+    </script>
+</body>
+</html>

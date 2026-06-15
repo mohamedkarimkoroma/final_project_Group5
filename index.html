@@ -1,0 +1,693 @@
+<!--
+  Salone Safe Ride - Sierra Leone National Transport Safety System
+  Copyright (c) 2026 [Your Name]
+  License: GNU GPL v3 - https://www.gnu.org/licenses/gpl-3.0.html
+  For Sierra Leone - Protecting passengers across all 16 districts.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salone Safe Ride - Sierra Leone National Transport Safety System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            scroll-behavior: smooth;
+        }
+
+        /* Sierra Leone Flag Header */
+        .flag-header {
+            background: linear-gradient(90deg, #006400 0%, #006400 33%, white 33%, white 66%, #006400 66%, #006400 100%);
+            height: 6px;
+            width: 100%;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, #006400, #008000);
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo-icon span {
+            font-size: 28px;
+        }
+
+        .logo-text h1 {
+            color: #006400;
+            font-size: 1.3rem;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .logo-text p {
+            color: #666;
+            font-size: 0.65rem;
+            margin: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: #006400;
+        }
+
+        .btn-register {
+            background: #006400;
+            color: white !important;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-register:hover {
+            background: #008000;
+            transform: translateY(-2px);
+        }
+
+        .btn-login {
+            border: 2px solid #006400;
+            color: #006400 !important;
+            padding: 8px 22px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            color: #006400;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 10px;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: #006400;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,100,0,0.2);
+        }
+
+        .btn-primary:hover {
+            background: #008000;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,100,0,0.3);
+        }
+
+        .btn-outline {
+            border: 2px solid #006400;
+            color: #006400;
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: #006400;
+            color: white;
+        }
+
+        /* Emergency Bar */
+        .emergency-bar {
+            background: #dc3545;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .emergency-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        .emergency-number {
+            font-weight: 800;
+            font-size: 1.2rem;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 30px;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 60px 20px;
+            background: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .stat-card {
+            padding: 30px;
+            background: #f8fafc;
+            border-radius: 20px;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #006400;
+        }
+
+        /* Features */
+        .features {
+            padding: 60px 20px;
+            background: #f8fafc;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #006400;
+            margin-bottom: 3rem;
+            font-weight: 700;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            transition: 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: #006400;
+            margin-bottom: 1rem;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 60px 20px;
+            background: white;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .step {
+            text-align: center;
+            width: 200px;
+        }
+
+        .step-number {
+            background: #006400;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Districts */
+        .districts {
+            padding: 60px 20px;
+            background: #f0fdf4;
+        }
+
+        .districts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .district-item {
+            background: white;
+            padding: 12px;
+            text-align: center;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #006400;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+
+        .district-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Rating Section */
+        .rating-section {
+            padding: 60px 20px;
+            background: white;
+        }
+
+        .rating-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #f8fafc;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .stars {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .star {
+            font-size: 45px;
+            cursor: pointer;
+            color: #ddd;
+            transition: 0.3s;
+        }
+
+        .star:hover, .star.active {
+            color: #ffc107;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a1a1a;
+            color: #ccc;
+            padding: 50px 20px 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section h4 {
+            color: #ffd700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid #333;
+        }
+
+        .admin-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 12px;
+        }
+
+        .admin-link a {
+            color: #888;
+            text-decoration: none;
+        }
+
+        .admin-link a:hover {
+            color: #ffd700;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .emergency-bar {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="flag-header"></div>
+
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">
+                <span>🇸🇱</span>
+            </div>
+            <div class="logo-text">
+                <h1>Salone Safe Ride</h1>
+                <p>Sierra Leone National Transport Safety System</p>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="#features">Features</a>
+            <a href="#districts">Districts</a>
+            <a href="login.html" class="btn-login">Login</a>
+            <a href="register.html" class="btn-register">Register</a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>Safe Travel Across Sierra Leone</h1>
+        <p>Digital Manifest | Real-time GPS Tracking | Emergency SOS | Family Connect</p>
+        <div>
+            <a href="register.html" class="btn btn-primary">Get Started Free</a>
+            <a href="login.html" class="btn btn-outline">Login</a>
+        </div>
+    </div>
+
+    <div class="emergency-bar">
+        <div class="emergency-item">🚓 Sierra Leone Police: <span class="emergency-number">119</span></div>
+        <div class="emergency-item">🚑 National Ambulance: <span class="emergency-number">999</span></div>
+        <div class="emergency-item">🔥 Fire Force: <span class="emergency-number">998</span></div>
+        <div class="emergency-item">🛣️ Road Safety Authority: <span class="emergency-number">112</span></div>
+    </div>
+
+    <div class="stats">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">16+</div>
+                <div>Districts Covered</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div>Emergency Response</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div>Digital Manifest</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">5K+</div>
+                <div>Active Users</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="features" id="features">
+        <h2 class="section-title">Why Choose Salone Safe Ride?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Digital Manifest</h3>
+                <p>Replace paper manifests with secure digital records. Never lose passenger information again.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📍</div>
+                <h3>Live GPS Tracking</h3>
+                <p>Family members can track your journey in real-time across all 16 districts.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚨</div>
+                <h3>One-Tap SOS</h3>
+                <p>Send emergency alerts to family, police, and hospitals with your exact location.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🏢</div>
+                <h3>Park Manager Portal</h3>
+                <p>Transport parks can create digital manifests for passengers - no paper needed!</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👨‍✈️</div>
+                <h3>Driver Union Portal</h3>
+                <p>Drivers confirm trips, update status, and manage their manifests.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⭐</div>
+                <h3>Rate Drivers</h3>
+                <p>Rate your driver after each trip to improve safety standards.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="how-it-works">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Register</h3>
+                <p>Create account with phone & emergency contacts</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Create Trip</h3>
+                <p>Enter origin, destination, vehicle details</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Park Confirmation</h3>
+                <p>Park manager confirms manifest</p>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <h3>Share with Family</h3>
+                <p>Family tracks journey in real-time</p>
+            </div>
+            <div class="step">
+                <div class="step-number">5</div>
+                <h3>Emergency SOS</h3>
+                <p>Press SOS if help needed</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="districts" id="districts">
+        <h2 class="section-title">Covering All 16 Districts</h2>
+        <div class="districts-grid">
+            <div class="district-item">Freetown (W.A.U)</div>
+            <div class="district-item">Western Area Rural</div>
+            <div class="district-item">Bo</div>
+            <div class="district-item">Kenema</div>
+            <div class="district-item">Makeni</div>
+            <div class="district-item">Kailahun</div>
+            <div class="district-item">Kono</div>
+            <div class="district-item">Port Loko</div>
+            <div class="district-item">Moyamba</div>
+            <div class="district-item">Kambia</div>
+            <div class="district-item">Pujehun</div>
+            <div class="district-item">Bonthe</div>
+            <div class="district-item">Tonkolili</div>
+            <div class="district-item">Falaba</div>
+            <div class="district-item">Karene</div>
+            <div class="district-item">Koinadugu</div>
+        </div>
+    </div>
+
+    <div class="rating-section">
+        <h2 class="section-title">Rate Your Driver</h2>
+        <div class="rating-container">
+            <p>Help improve safety standards in Sierra Leone by rating your driver</p>
+            <div class="stars">
+                <span class="star" data-rating="1">★</span>
+                <span class="star" data-rating="2">★</span>
+                <span class="star" data-rating="3">★</span>
+                <span class="star" data-rating="4">★</span>
+                <span class="star" data-rating="5">★</span>
+            </div>
+            <textarea id="reviewText" placeholder="Share your experience (optional)" style="width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 8px; min-height: 80px;"></textarea>
+            <button onclick="submitRating()" style="width: 100%; padding: 14px; background: #006400; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Submit Rating</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>🇸🇱 Salone Safe Ride</h4>
+                <p>Sierra Leone's National Transport Safety System</p>
+                <p>Protecting passengers across all 16 districts</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="register.html">Register</a>
+                <a href="login.html">Login</a>
+                <a href="#features">Features</a>
+                <a href="#districts">Districts</a>
+            </div>
+            <div class="footer-section">
+                <h4>Emergency Numbers</h4>
+                <p>🚓 Police: 119</p>
+                <p>🚑 Ambulance: 999</p>
+                <p>🛣️ Road Safety: 112</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>📧 info@salonesaferide.gov.sl</p>
+                <p>📞 +232 76 000 000</p>
+                <p>📍 Freetown, Sierra Leone</p>
+            </div>
+        </div>
+        
+        <!-- Admin Login Link Added Here -->
+        <div class="admin-link">
+            <a href="admin_login.php">🔐 Admin Portal Login</a> | 
+            <a href="index.html">Back to Home</a>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2026 Salone Safe Ride - Sierra Leone National Transport Safety System</p>
+            <p>Together for safer roads in Sierra Leone</p>
+        </div>
+    </footer>
+
+    <script>
+        // Star rating system
+        let selectedRating = 0;
+        document.querySelectorAll('.star').forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.rating);
+                document.querySelectorAll('.star').forEach(s => {
+                    if (parseInt(s.dataset.rating) <= selectedRating) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+            
+            star.addEventListener('mouseover', function() {
+                const rating = parseInt(this.dataset.rating);
+                document.querySelectorAll('.star').forEach(s => {
+                    if (parseInt(s.dataset.rating) <= rating) {
+                        s.style.color = '#ffc107';
+                    } else {
+                        s.style.color = '#ddd';
+                    }
+                });
+            });
+            
+            star.addEventListener('mouseout', function() {
+                document.querySelectorAll('.star').forEach(s => {
+                    if (s.classList.contains('active')) {
+                        s.style.color = '#ffc107';
+                    } else {
+                        s.style.color = '#ddd';
+                    }
+                });
+            });
+        });
+
+        function submitRating() {
+            if (selectedRating === 0) {
+                alert('Please select a rating (1-5 stars)');
+                return;
+            }
+            alert(`Thank you for rating ${selectedRating} stars! Your feedback helps improve safety.`);
+            selectedRating = 0;
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+            document.getElementById('reviewText').value = '';
+        }
+    </script>
+</body>
+</html>
